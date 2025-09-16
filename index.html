@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business Tracker</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512' fill='%234299e1'><path d='M64 400C64 408.8 71.16 416 80 416H480C497.7 416 512 430.3 512 448C512 465.7 497.7 480 480 480H80C35.82 480 0 444.2 0 400V64C0 46.33 14.33 32 32 32C49.67 32 64 46.33 64 64V400zM342.6 278.6C330.1 291.1 309.9 291.1 297.4 278.6L240 221.3L150.6 310.6C138.1 323.1 117.9 323.1 105.4 310.6C92.88 298.1 92.88 277.9 105.4 265.4L217.4 153.4C229.9 140.9 250.1 140.9 262.6 153.4L320 210.7L425.4 105.4C437.9 92.88 458.1 92.88 470.6 105.4C483.1 117.9 483.1 138.1 470.6 150.6L342.6 278.6z'/></svg>"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1><i class="fas fa-chart-line"></i> Business Tracker</h1>
+        <p
+          style="
+            margin: 0;
+            color: #718096;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;"
+        >
+          Bannno & Dope
+        </p>
+      </div>
+      <div class="user-info">
+    <button class="btn btn-secondary" onclick="showGitHubSettings()" style="padding: 6px 12px; font-size: 12px; margin-right: 10px;">
+      <i class="fab fa-github"></i> Sync Settings
+    </button>
+        <span>Welcome</span>
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Navigation -->
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showTab('dashboard')">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </button>
+        <button class="nav-tab" onclick="showTab('sales')">
+          <i class="fas fa-coins"></i> Sales
+        </button>
+        <button class="nav-tab" onclick="showTab('expenses')">
+          <i class="fas fa-receipt"></i> Expenses
+        </button>
+      </div>
+
+      <!-- Dashboard Tab -->
+      <div id="dashboardTab" class="tab-content active">
+        <div class="dashboard-filters">
+          <div>
+            <label class="filter-label">Business</label>
+            <select
+              id="businessFilter"
+              class="form-control"
+              onchange="updateDashboard()"
+            >
+              <option value="">All Businesses</option>
+              <option value="Bannno">Bannno</option>
+              <option value="Dope">Dope</option>
+              <option value="SunnyDays">Sunny Days</option>
+              <option value="Zomato">Zomato</option>
+            </select>
+          </div>
+          <div>
+            <label class="filter-label">Period</label>
+            <select
+              id="periodFilter"
+              class="form-control"
+              onchange="updateDashboard()"
+            >
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month" selected>This Month</option>
+              <option value="last-month">Last Month</option>
+              <option value="quarter">This Quarter</option>
+              <option value="year">This Year</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+          <div>
+            <label class="filter-label">Actions</label>
+            <button class="btn btn-secondary" onclick="refreshData()">
+              <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+          </div>
+        </div>
+
+        <div class="summary-cards">
+          <div class="card cash">
+            <div class="card-icon"><i class="fas fa-money-bill"></i></div>
+            <div class="card-content">
+              <h3 id="totalCash">₹0</h3>
+              <p>Cash in Hand</p>
+              <small id="cashBreakdown">Collected: ₹0 | Spent: ₹0</small>
+            </div>
+          </div>
+          <div class="card upi">
+            <div class="card-icon"><i class="fas fa-credit-card"></i></div>
+            <div class="card-content">
+              <h3 id="totalUPI">₹0</h3>
+              <p>UPI in Hand</p>
+              <small id="upiBreakdown">Collected: ₹0 | Spent: ₹0</small>
+            </div>
+          </div>
+          <div class="card sales">
+            <div class="card-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="card-content">
+              <h3 id="totalSales">₹0</h3>
+              <p>Total Sales</p>
+              <small id="salesCount">0 transactions</small>
+            </div>
+          </div>
+          <div class="card expenses">
+            <div class="card-icon"><i class="fas fa-money-bill-wave"></i></div>
+            <div class="card-content">
+              <h3 id="totalExpenses">₹0</h3>
+              <p>Total Expenses</p>
+              <small id="expensesCount">0 transactions</small>
+            </div>
+          </div>
+          <div class="card profit">
+            <div class="card-icon"><i class="fas fa-trophy"></i></div>
+            <div class="card-content">
+              <h3 id="netProfit">₹0</h3>
+              <p>Net Profit</p>
+              <small id="profitMargin">0% margin</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sales Tab -->
+      <div id="salesTab" class="tab-content">
+        <div class="tab-header">
+          <h3><i class="fas fa-coins"></i> Sales Management</h3>
+          <button class="btn btn-primary" onclick="showSalesForm()">
+            <i class="fas fa-plus"></i> Add Sale
+          </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="search-filters">
+          <div class="filter-grid">
+            <div>
+              <label class="filter-label">Search</label>
+              <input
+                type="text"
+                id="salesSearch"
+                class="form-control"
+                placeholder="Search sales..."
+                onkeyup="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Date From</label>
+              <input
+                type="date"
+                id="salesDateFrom"
+                class="form-control"
+                onchange="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Date To</label>
+              <input
+                type="date"
+                id="salesDateTo"
+                class="form-control"
+                onchange="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Actions</label>
+              <div style="display: flex; gap: 10px">
+                <button class="btn btn-success" onclick="applyFilters()">
+                  <i class="fas fa-filter"></i> Filter
+                </button>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                  <i class="fas fa-times"></i> Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sale ID</th>
+                <th>Date</th>
+                <th>Business</th>
+                <th>Cash</th>
+                <th>UPI</th>
+                <th>Total</th>
+                <th>Created By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="salesTableBody">
+              <tr>
+                <td colspan="8" class="loading">Loading sales data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Expenses Tab -->
+      <div id="expensesTab" class="tab-content">
+        <div class="tab-header">
+          <h3><i class="fas fa-receipt"></i> Expense Management</h3>
+          <button class="btn btn-primary" onclick="showExpensesForm()">
+            <i class="fas fa-plus"></i> Add Expense
+          </button>
+        </div>
+
+        <!-- Search and Filters -->
+        <div class="search-filters">
+          <div class="filter-grid">
+            <div>
+              <label class="filter-label">Search</label>
+              <input
+                type="text"
+                id="expensesSearch"
+                class="form-control"
+                placeholder="Search expenses..."
+                onkeyup="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Date From</label>
+              <input
+                type="date"
+                id="expensesDateFrom"
+                class="form-control"
+                onchange="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Date To</label>
+              <input
+                type="date"
+                id="expensesDateTo"
+                class="form-control"
+                onchange="applyFilters()"
+              />
+            </div>
+            <div>
+              <label class="filter-label">Actions</label>
+              <div style="display: flex; gap: 10px">
+                <button class="btn btn-success" onclick="applyFilters()">
+                  <i class="fas fa-filter"></i> Filter
+                </button>
+                <button class="btn btn-secondary" onclick="clearFilters()">
+                  <i class="fas fa-times"></i> Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Expense ID</th>
+                <th>Date</th>
+                <th>Business</th>
+                <th>Purpose</th>
+                <th>Amount</th>
+                <th>Payment</th>
+                <th>Created By</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTableBody">
+              <tr>
+                <td colspan="8" class="loading">Loading expenses data...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Modal -->
+    <div id="salesModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4><i class="fas fa-plus-circle"></i> Add New Sale</h4>
+          <span class="close" onclick="closeSalesModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <form id="salesForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Date</label>
+                <input
+                  type="date"
+                  id="saleDate"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-store"></i> Business</label>
+                <select id="saleBusiness" class="form-control" required>
+                  <option value="">Select Business</option>
+                  <option value="Bannno">Bannno</option>
+                  <option value="Dope">Dope</option>
+                  <option value="SunnyDays">Sunny Days</option>
+                  <option value="Zomato">Zomato</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-money-bill"></i> Cash Amount (₹)</label>
+                <input
+                  type="number"
+                  id="saleCash"
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  value=""
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> UPI Amount (₹)</label>
+                <input
+                  type="number"
+                  id="saleUPI"
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  value=""
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-calculator"></i> Total Amount</label>
+              <input
+                type="number"
+                id="saleTotal"
+                class="form-control"
+                readonly
+              />
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="closeSalesModal()"
+              >
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Sale
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expenses Modal -->
+    <div id="expensesModal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4><i class="fas fa-plus-circle"></i> Add New Expense</h4>
+          <span class="close" onclick="closeExpensesModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <form id="expensesForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Date</label>
+                <input
+                  type="date"
+                  id="expenseDate"
+                  class="form-control"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-store"></i> Business</label>
+                <select id="expenseBusiness" class="form-control" required>
+              <option value="All Businesses">All Businesses</option>
+                  <option value="Bannno">Bannno</option>
+                  <option value="Dope">Dope</option>
+                  <option value="Sunny Days">Sunny Days</option>
+                  <option value="Zomato">Zomato</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- IMAGE UPLOAD SECTION -->
+            <div class="form-group">
+              <label
+                ><i class="fas fa-image"></i> Receipt/Image (Optional)</label
+              >
+              <input
+                type="file"
+                id="expenseImage"
+                class="form-control"
+                accept="image/*"
+                onchange="handleImageUpload(this)"
+                style="padding: 8px"
+              />
+              <small
+                style="
+                  color: #718096;
+                  font-size: 12px;
+                  margin-top: 5px;
+                  display: block;
+                "
+              >
+                Select receipt image (JPG, PNG, GIF supported)
+              </small>
+
+              <!-- IMAGE PREVIEW -->
+              <div
+                id="imagePreview"
+                style="
+                  margin-top: 15px;
+                  display: none;
+                  padding: 15px;
+                  background: #f8f9fa;
+                  border-radius: 8px;
+                  border: 1px solid #e2e8f0;
+                "
+              >
+                <div style="display: flex; align-items: center; gap: 15px">
+                  <img
+                    id="previewImg"
+                    src=""
+                    alt="Receipt preview"
+                    style="
+                      max-width: 120px;
+                      max-height: 120px;
+                      border-radius: 8px;
+                      border: 1px solid #e2e8f0;
+                      object-fit: cover;
+                    "
+                  />
+                  <div>
+                    <p
+                      style="
+                        margin: 0;
+                        font-weight: 600;
+                        color: #2d3748;
+                        font-size: 14px;
+                      "
+                    >
+                      Receipt Image
+                    </p>
+                    <p
+                      id="imageInfo"
+                      style="
+                        margin: 5px 0 10px 0;
+                        font-size: 12px;
+                        color: #718096;
+                      "
+                    ></p>
+                    <button
+                      type="button"
+                      onclick="removeImage()"
+                      class="btn btn-danger"
+                      style="padding: 4px 8px; font-size: 11px"
+                    >
+                      <i class="fas fa-times"></i> Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label><i class="fas fa-tag"></i> Purpose</label>
+              <input
+                type="text"
+                id="expensePurpose"
+                class="form-control"
+                placeholder="Enter expense purpose"
+                required
+              />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label><i class="fas fa-rupee-sign"></i> Amount (₹)</label>
+                <input
+                  type="number"
+                  id="expenseAmount"
+                  class="form-control"
+                  min="0"
+                  step="0.01"
+                  required
+                />
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> Payment Method</label>
+                <select id="expensePaymentMethod" class="form-control" required>
+                  <option value="Cash">Cash</option>
+                  <option value="UPI">UPI</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                onclick="closeExpensesModal()"
+              >
+                <i class="fas fa-times"></i> Cancel
+              </button>
+              <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Expense
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="imageViewerModal" class="modal">
+      <div class="modal-content" style="max-width: 90%; max-height: 90%">
+        <div class="modal-header">
+          <h4><i class="fas fa-image"></i> Receipt Image</h4>
+          <span class="close" onclick="closeImageViewer()">&times;</span>
+        </div>
+        <div class="modal-body" style="text-align: center; padding: 20px">
+          <img
+            id="fullSizeImage"
+            src=""
+            alt="Receipt"
+            style="
+              max-width: 100%;
+              max-height: 70vh;
+              border-radius: 8px;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            "
+          />
+          <div style="margin-top: 20px">
+            <button class="btn btn-secondary" onclick="downloadImage()">
+              <i class="fas fa-download"></i> Download
+            </button>
+            <button
+              class="btn btn-primary"
+              onclick="closeImageViewer()"
+              style="margin-left: 10px"
+            >
+              <i class="fas fa-times"></i> Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+      <div class="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Processing...</p>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
