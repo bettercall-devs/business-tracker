@@ -650,19 +650,19 @@
           margin-bottom: 20px;
         }
         .header h1 {
-          font-size: 22px;
-          gap: 8px;
+          font-size: 18px;
+          gap: 5px;
         }
         .header h1 i {
           font-size: 24px;
         }
         .user-info {
-          font-size: 13px;
-          gap: 10px;
+          font-size: 12px;
+          gap: 5px;
         }
         .logout-btn {
           padding: 8px 14px;
-          font-size: 12px;
+          font-size: 10px;
           min-height: 44px; /* Touch-friendly */
         }
 
