@@ -197,7 +197,7 @@ window.testGitHubConnection = testGitHubConnection;
 
       const users = {
         krishnaraj: { password: "krishnaraj@123", name: "Krishnaraj" },
-        dhnaush: { password: "dhnaush@123", name: "Dhnaush" },
+        dhanush: { password: "dhanush@123", name: "Dhanush" },
         jayasuriya: { password: "jayasuriya@123", name: "Jayasuriya" },
         jana: { password: "jana@123", name: "Jana" },
       };
@@ -1137,7 +1137,7 @@ window.testGitHubConnection = testGitHubConnection;
             (sale) => `
               <tr>
                   <td><strong>${sale.id}</strong></td>
-                  <td>${formatDateTime(sale.created_at)}</td>
+                  <td>${formatDate(sale.date)}</td>
                   <td><span class="badge">${sale.business}</span></td>
                   <td class="status-positive">₹${formatNumber(
                     sale.cash || 0
@@ -1186,7 +1186,7 @@ window.testGitHubConnection = testGitHubConnection;
             (expense) => `
             <tr>
                 <td><strong>${expense.id}</strong></td>
-                <td>${formatDateTime(expense.created_at)}</td>
+                <td>${formatDate(expense.date)}</td>
                 <td><span class="badge">${expense.business}</span></td>
                 <td>
                     ${expense.purpose}
