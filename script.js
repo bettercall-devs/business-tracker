@@ -191,8 +191,8 @@ window.testGitHubConnection = testGitHubConnection;
       // ========================================
       // LOGIN SYSTEM
       // ========================================
-      const DEFAULT_INITIAL_CASH = 1300;
-      const DEFAULT_INITIAL_UPI = 1744;
+      const DEFAULT_INITIAL_CASH = 0;
+      const DEFAULT_INITIAL_UPI = 0;
       let currentUser = null;
 
       const users = {
@@ -1642,3 +1642,4 @@ function initializeApp() {
           initializeApp();
         }
       });
+
