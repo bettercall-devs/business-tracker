@@ -100,6 +100,104 @@ function showGitHubSettings() {
     
     document.body.insertAdjacentHTML("beforeend", settingsHtml);
 }
+// ========================================
+// INITIAL BALANCE SETTINGS
+// ========================================
+
+function showBalanceSettings() {
+    const settingsHtml = `
+        <div id="balanceSettingsModal" class="modal active">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    <h4><i class="fas fa-wallet"></i> Initial Balance Settings</h4>
+                    <span class="close" onclick="closeBalanceSettings()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 20px; color: #856404; border: 1px solid #ffeaa7;">
+                        <i class="fas fa-info-circle"></i> Set your starting balances. These will be added to your calculations.
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <h5>Current Balances</h5>
+                        <p><strong>Initial Cash:</strong> ${formatCurrency(DEFAULT_INITIAL_CASH)}</p>
+                        <p><strong>Initial UPI:</strong> ${formatCurrency(DEFAULT_INITIAL_UPI)}</p>
+                    </div>
+
+                    <form id="balanceSettingsForm">
+                        <div class="form-group">
+                            <label><i class="fas fa-money-bill"></i> Initial Cash Balance (₹)</label>
+                            <input 
+                                type="number" 
+                                id="newInitialCash" 
+                                class="form-control" 
+                                value="${DEFAULT_INITIAL_CASH}"
+                                step="0.01"
+                                placeholder="0.00"
+                            />
+                            <small style="color: #666;">Enter your starting cash amount</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-credit-card"></i> Initial UPI Balance (₹)</label>
+                            <input 
+                                type="number" 
+                                id="newInitialUPI" 
+                                class="form-control" 
+                                value="${DEFAULT_INITIAL_UPI}"
+                                step="0.01"
+                                placeholder="0.00"
+                            />
+                            <small style="color: #666;">Enter your starting UPI amount</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeBalanceSettings()">
+                                <i class="fas fa-times"></i> Cancel
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="saveBalanceSettings()">
+                                <i class="fas fa-save"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', settingsHtml);
+}
+
+function saveBalanceSettings() {
+    const newCash = parseFloat(document.getElementById('newInitialCash').value) || 0;
+    const newUPI = parseFloat(document.getElementById('newInitialUPI').value) || 0;
+
+    // Save to localStorage
+    localStorage.setItem('business_tracker_initial_cash', newCash);
+    localStorage.setItem('business_tracker_initial_upi', newUPI);
+
+    // Update global variables
+    DEFAULT_INITIAL_CASH = newCash;
+    DEFAULT_INITIAL_UPI = newUPI;
+
+    // Refresh dashboard to show new calculations
+    updateDashboard();
+
+    showNotification('Initial balances updated successfully!', 'success');
+    closeBalanceSettings();
+}
+
+function closeBalanceSettings() {
+    const modal = document.getElementById('balanceSettingsModal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Make functions globally available
+window.showBalanceSettings = showBalanceSettings;
+window.closeBalanceSettings = closeBalanceSettings;
+window.saveBalanceSettings = saveBalanceSettings;
+
 
 function saveGitHubCredentials() {
     const token = document.getElementById("newToken").value.trim();
@@ -191,8 +289,8 @@ window.testGitHubConnection = testGitHubConnection;
       // ========================================
       // LOGIN SYSTEM
       // ========================================
-      const DEFAULT_INITIAL_CASH = 0;
-      const DEFAULT_INITIAL_UPI = 0;
+let DEFAULT_INITIAL_CASH = parseFloat(localStorage.getItem('business_tracker_initial_cash')) || 0;
+let DEFAULT_INITIAL_UPI = parseFloat(localStorage.getItem('business_tracker_initial_upi')) || 0;
       let currentUser = null;
 
       const users = {
@@ -1642,4 +1740,5 @@ function initializeApp() {
           initializeApp();
         }
       });
+
 
